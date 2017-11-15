@@ -1,11 +1,12 @@
 /************ Variables  ************/ 
 // Game settings
 var gameScreen = 0;
-var gameTime = 15;
+var gameTime = 10;
 
 // Balls settings
+let numberOfBub = 3;
 let bubbles= []; 
-let numberOfBub = 1;
+let vel = 3;
 // Other 
 var gameStartTime = 0;
 
@@ -21,7 +22,7 @@ function setup(){
 	
 	startButton = createButton('Start');
 	startButton.position(width/2-startButton.width, height*0.9);
-	startButton.mousePressed(startPressed);
+	startButton.mouseClicked(startPressed);
 }
 /************ Draw block  ************/ 
 function draw(){	
@@ -134,10 +135,9 @@ function startPressed(){
 
 /************ Start The Game ************/ 
 function startTheGame(){
-		// THAT WAS IN FIRST IF OF PRESSED MOUSE
-		inputBubblesNumber.hide();
-		inputGameTime.hide();
-		startButton.hide();
+	inputBubblesNumber.hide();
+	inputGameTime.hide();
+	startButton.hide();
 		
 	numberOfBub = inputBubblesNumber.value();
 	gameTime = inputGameTime.value();
@@ -154,16 +154,17 @@ class Bubble{
 		this.d = d;
 		this.bubbleColor = [0,0,0];
 		this.bubbleClickCount = 0;
-		this.velX = 3;
-		this.velY = 3;
+		this.velX = vel - Math.round(Math.random())*2*vel;
+		this.velY = vel - Math.round(Math.random())*2*vel;
+		
 	}
 	clicked(x,y){
 		let distance = dist(x, y, this.x, this.y);
-		if(distance < this.d/2){
+		if(distance-20 < this.d/2){// it is hard to click so -15 is a help for player
 			this.bubbleClickCount ++;
 			// move to new random place
-			this.x = random(0,600);
-			this.y = random(0,400);
+			this.x = random(0+this.d/2,600-this.d/2);
+			this.y = random(0+this.d/2,400-this.d/2);
 		}
 		if(this.bubbleClickCount == 1){
 			// gray
@@ -182,16 +183,19 @@ class Bubble{
 	}
 
 	move(){
-		if(this.x < this.d/2){
-			this.x=this.x+3;
-		} else if(this.x > width-this.d/2){
-			this.x=this.x-3;
+		this.x += this.velX;
+		this.y += this.velY;
+		
+		if(this.x <= this.d/2){
+			this.velX *=-1;
+		} else if(this.x >= width-this.d/2){
+			this.velX *=-1;
 		}
 		
-		if(this.y < this.d/3){
-			this.y = this.y + 2;
-		}else if(this.y > height-this.d/2){
-			this.y = this.y - 2;
+		if(this.y <= this.d/3){
+			this.velY *=-1;
+		}else if(this.y >= height-this.d/2){
+			this.velY *=-1;
 		}
 	}
 	show(){
