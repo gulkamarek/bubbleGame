@@ -1,13 +1,13 @@
 /************ Variables  ************/ 
 // Game settings
 var gameScreen = 0;
-var gameTime = 15;
-
+var gameTime = 3;
+var timeToEnd = 0 ;
 // Balls settings
 let bubbles= []; 
 let numberOfBub = 1;
-// Other 
-var gameStartTime = 0;
+
+
 
 /************ Setup block  ************/ 
 function setup(){
@@ -21,7 +21,7 @@ function setup(){
 	
 	startButton = createButton('Start');
 	startButton.position(width/2-startButton.width, height*0.9);
-	startButton.mousePressed(startPressed);
+	//startButton.mousePressed();
 }
 /************ Draw block  ************/ 
 function draw(){	
@@ -29,9 +29,9 @@ function draw(){
 		initScreen();
 	}else if(gameScreen == 1){
 		playScreen();
-	}else if(gameScreen == 2){
+	}else if(gameScreen = 2){
 		gameOverScreen();
-	}else if(gameScreen == 3){
+	}else if(gameScreen = 3){
 		winScreen();
 	};
 }
@@ -39,8 +39,7 @@ function draw(){
 function creatingBubbles(){
 	for(var i=0; i<numberOfBub; i++){
 		let x = 10 +30*i;
-		let d = random(40,60);
-		bubbles[i] = new Bubble(random(0+d/2,600-d/2),random(0+d/2,400-d/2), d);
+		bubbles[i] = new Bubble(random(0,600),random(0,400), random(20,40));
 	}
 }
 
@@ -53,35 +52,30 @@ function initScreen(){
 	textAlign(CENTER);
 	fill(255);
 	textSize(40);
-	text("CLICK THE BUBBLES", width/2, height/2);
+	text("KILL THE BUBBLES", width/2, height/2);
 	textSize(20);
+	//text("Click to start the game", width/2, height*(0.8) );
 	textAlign(RIGHT);
 	text("Number of bubbles : ", width/2, height*(0.745) );
 	text("Time of the game : ", width/2, height*(0.845) );
 }
-/************ playScreen ************/
+/************ playScreen ************/ //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!11
 function playScreen(){
 	background(0);
+	let timeEnd = (timeToEnd-millis()/1000).toFixed(2);
+	// CONSOLE LOG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	console.log(timeEnd,timeEnd, millis());
 	strokeWeight(1);
 	noStroke();
 	fill(255);
-	textAlign(CENTER);
-	// timing
-	timeLeft = (gameTime - ((performance.now()-gameStartTime)/1000)).toFixed(2);
-	text("Time left: \n" + timeLeft, 45, 20);
-	
+	text("Time left: \n" + timeEnd, 45, 20);
 	for(var i=0; i < bubbles.length; i++){
 		bubbles[i].show();
 		bubbles[i].move();	
 	}
-	
-	if (timeLeft<0){
-		gameScreen = 2;
-	}	
-	
-	if (timeLeft>0 && bubbles.length==0){
-		gameScreen = 3;
-	}
+	if (timeEnd<0){
+		gameScreen =2;
+	}		
 }
 /************ gameOverScreen ************/ 
 function gameOverScreen(){
@@ -112,10 +106,15 @@ function winScreen(){
 
 
 
+
+
+
+
 /************ Mouse clicked block ************/ 
 function mouseClicked(){
 	if(gameScreen == 0){
-		// nothing because ther is a button :D
+		
+		startTheGame();
 	}else if(gameScreen == 1){
 		for(let i = 0; i < bubbles.length; i++){
 			bubbles[i].clicked(mouseX,mouseY);
@@ -126,12 +125,6 @@ function mouseClicked(){
 		location.reload();
 	}
 }
-
-/************ Mouse clicked block ************/ 
-function startPressed(){
-	startTheGame();
-};
-
 /************ Start The Game ************/ 
 function startTheGame(){
 		// THAT WAS IN FIRST IF OF PRESSED MOUSE
@@ -141,8 +134,11 @@ function startTheGame(){
 		
 	numberOfBub = inputBubblesNumber.value();
 	gameTime = inputGameTime.value();
+	timeToEnd = millis()/1000 + gameTime;
 	
-	gameStartTime = performance.now();
+	// CONSOLE LOG !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+	console.log('gameTime',gameTime,'millis', millis().toFixed(2),'timeToEnd',timeToEnd );
+	
 	gameScreen = 1;
 	creatingBubbles();
 }
@@ -152,7 +148,7 @@ class Bubble{
 		this.x = x;
 		this.y = y;
 		this.d = d;
-		this.bubbleColor = [0,0,0];
+		this.bubbleColor = [0,0,0];,
 		this.bubbleClickCount = 0;
 		this.velX = 3;
 		this.velY = 3;
